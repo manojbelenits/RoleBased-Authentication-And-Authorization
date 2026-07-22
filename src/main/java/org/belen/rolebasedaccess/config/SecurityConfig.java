@@ -1,6 +1,7 @@
 package org.belen.rolebasedaccess.config;
 
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import tools.jackson.databind.ObjectMapper;
+
+import java.util.HashMap;
 
 @Configuration
 @EnableWebSecurity
@@ -26,12 +30,12 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http){
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(customizer->customizer.disable());
 
         http.authorizeHttpRequests(request->request
                        .requestMatchers("/auth/**")
-                        .permitAll()
+                       .permitAll()
 
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
@@ -49,6 +53,40 @@ public class SecurityConfig {
 //        http.httpBasic(Customizer.withDefaults());
         http.sessionManagement(session->
                                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        http.exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, ex) -> {
+                    // Triggered ONLY when the user is NOT authenticated (missing or invalid token)
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    response.setContentType("application/json");
+
+                    HashMap<String, Object> hm = new HashMap<>();
+                    hm.put("error","Unauthorized");
+                    hm.put("message",ex.getMessage());
+                    String s = new ObjectMapper()
+                            .writeValueAsString(hm);
+                    response.getWriter().write(s);
+                })
+                .accessDeniedHandler((request, response, ex) -> {
+                    // Triggered when the user IS authenticated, but LACKS the required role
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    response.setContentType("application/json");
+
+                    HashMap<String, Object> hm = new HashMap<>();
+                    hm.put("error","Forbidden");
+                    hm.put("message","Access Denied");
+                    String s = new ObjectMapper()
+                            .writeValueAsString(hm);
+                    response.getWriter().write(s);
+                })
+        );
+
+
+
+
+
+
+
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

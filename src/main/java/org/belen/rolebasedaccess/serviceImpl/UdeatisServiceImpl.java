@@ -20,7 +20,7 @@ public class UdeatisServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String uname) throws UsernameNotFoundException {
 
         UserEntity users = usersRepo.findUserByUname(uname)
-                .orElseThrow(() -> new UsernameNotFoundException("Counselor Not Found By That Mail"));
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found By That Mail"));
 
         return new UserPrinciple(users);
     }

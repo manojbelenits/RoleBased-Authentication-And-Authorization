@@ -42,21 +42,27 @@ public class AuthenticationServImpl {
     public LoginResponse loginMethod(LoginRequest request){
 
 
-        Authentication authenticate = manager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
-        UserPrinciple currentUser =
-                (UserPrinciple) authenticate.getPrincipal();
+        try{
+            Authentication authenticate = manager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+            UserPrinciple currentUser =
+                    (UserPrinciple) authenticate.getPrincipal();
 
             String token = jwtService.generateToken(currentUser.getUsername());
 
-        return LoginResponse.builder()
-                .msg("Login SuccessFull")
-                .toekn(token)
-                .build();
+            return LoginResponse.builder()
+                    .msg("Login SuccessFull")
+                    .toekn(token)
+                    .build();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            throw e;
+        }
 
     }
 
