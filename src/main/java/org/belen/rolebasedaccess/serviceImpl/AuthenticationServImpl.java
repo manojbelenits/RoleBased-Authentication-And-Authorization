@@ -54,6 +54,8 @@ public class AuthenticationServImpl {
 
             String token = jwtService.generateToken(currentUser.getUsername());
 
+            System.out.println(request.getUsername()+"=>"+token+"\n");
+
             return LoginResponse.builder()
                     .msg("Login SuccessFull")
                     .toekn(token)

@@ -56,14 +56,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
 
-                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-                UserPrinciple principal = (UserPrinciple) authentication.getPrincipal();
-                System.out.println(authentication.isAuthenticated());
-                System.out.println(principal.getUsername());
-                System.out.println(principal.getPassword());
-                System.out.println(principal.getAuthorities());
-
-                System.out.println(SecurityContextHolder.getContext().getAuthentication());
+//                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//                UserPrinciple principal = (UserPrinciple) authentication.getPrincipal();
+//                System.out.println(authentication.isAuthenticated());
+//                System.out.println(principal.getUsername());
+//                System.out.println(principal.getPassword());
+//                System.out.println(principal.getAuthorities());
+//
+//                System.out.println(SecurityContextHolder.getContext().getAuthentication());
 
             }
         }
