@@ -56,7 +56,7 @@ public class SecurityConfig {
 
         http.exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, ex) -> {
-                    // Triggered ONLY when the user is NOT authenticated (missing or invalid token)
+
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     response.setContentType("application/json");
 
@@ -68,7 +68,7 @@ public class SecurityConfig {
                     response.getWriter().write(s);
                 })
                 .accessDeniedHandler((request, response, ex) -> {
-                    // Triggered when the user IS authenticated, but LACKS the required role
+
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.setContentType("application/json");
 
